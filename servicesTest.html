@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh_cn">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<script type="text/javascript" src="lib/angular.js"></script>
+<script type="text/javascript" src="js/servicesTest/invoice1.js"></script>
+<script type="text/javascript" src="js/servicesTest/services.js"></script>
+<body id="ng-app" ng-app="invoice1" ng-controller="InvoiceController as invoice">
+<div>
+    <b>Invoice:</b>
+
+    <div>
+        Quantity;<input type="number" min="0" ng-model="invoice.qty" required>
+    </div>
+    <div>
+        Costs: <input type="number" min="0" ng-model="invoice.cost" required>
+        <select ng-model="invoice.inCurr">
+            <option ng-repeat="c in invoice.currencies" value="{{c}}">{{invoice.currenciesMap[c]}}</option>
+        </select>
+    </div>
+    <div>
+        <b>Total</b><br>
+        <span ng-repeat="c in invoice.currencies">
+            {{invoice.total(c) | currency:invoice.currenciesMap[c]}}<br>
+        </span>
+        <button ng-click="invoice.pay()">pay</button>
+    </div>
+</div>
+</body>
+</html>
