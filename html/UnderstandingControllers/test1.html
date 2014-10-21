@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <script src="../../lib/angular.js"></script>
+    </head>
+    <body ng-app="myApp" ng-controller="GreetingController">
+        {{greeting}}
+        tow times <input ng-model="num" value="0"> = {{double(num)}}
+    </body>
+    <script type="text/javascript">
+        var myApp = angular.module('myApp',[]);
+        myApp.controller('GreetingController',['$scope',function($scope){
+            //添加属性
+            $scope.greeting = 'HelloWorld';
+            //添加动作
+            $scope.double = function(value){
+                return 2*value;
+            }
+        }]);
+    </script>
+</html>

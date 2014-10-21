@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="../../lib/angular.js"></script>
+    <link rel="shortcut icon" type="image/png" href="../../lib/jasmine/lib/jasmine-2.0.3/jasmine_favicon.png">
+    <link rel="stylesheet" type="text/css" href="../../lib/jasmine/lib/jasmine-2.0.3/jasmine.css">
+    <script type="text/javascript" src="../../lib/jasmine/lib/jasmine-2.0.3/jasmine.js"></script>
+    <script type="text/javascript" src="../../lib/jasmine/lib/jasmine-2.0.3/jasmine-html.js"></script>
+    <script type="text/javascript" src="../../lib/jasmine/lib/jasmine-2.0.3/boot.js"></script>
+    <script src="../../lib/angular-mocks.js"></script>
+</head>
+<body ng-app="myApp">
+    <div id="simple" ng-controller="myController">
+        <input ng-init="message='test'" ng-model="message">
+        <button ng-click="callNotify(message)" id="submit">submit</button>
+    </div>
+</body>
+<script type="text/javascript">
+    angular.module('myApp',[]).controller('myController',['$scope','notify',function($scope,notify){
+        $scope.callNotify = function(message){
+            notify.call(message);
+            $scope.message = 'test1';
+        }
+    }]).factory('notify',['$log','$window',function($log,$window){
+        var msg = [];
+        var call = function(message){
+            $log.log(message);
+            msg.push(message);
+            if(msg.length>=3){
+                alert(msg.join("\n"));
+                msg=[];
+                //$scope.message = 'test3';
+            }
+        }
+        return {call : call};
+    }]);
+
+    var windows,notify;
+
+    beforeEach(function() {
+        module('myApp');
+        inject(function($injector,$window) {
+            notify = $injector.get('notify').call;
+            windows = $window;
+        });
+        spyOn(windows, 'alert');
+    });
+
+    it('should not alert first two notifications', function() {
+        notify('one');
+        notify('two');
+
+        expect(windows.alert).not.toHaveBeenCalled();
+    });
+
+    it('should alert all after third notification', function() {
+        notify('one');
+        notify('two');
+        notify('three');
+
+        expect(windows.alert).toHaveBeenCalledWith("one\ntwo\nthree");
+    });
+
+    it('should clear messages after alert', function() {
+        notify('one');
+        notify('two');
+        notify('third');
+        notify('more');
+        notify('two');
+        notify('third');
+
+        expect(windows.alert.calls.count()).toEqual(2);
+        expect(windows.alert.calls.mostRecent().args).toEqual(["more\ntwo\nthird"]);
+    });
+</script>
+</html>

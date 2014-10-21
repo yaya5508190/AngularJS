@@ -1,0 +1,64 @@
+<html>
+<head>
+    <script src="../../lib/angular.js"></script>
+    <link rel="shortcut icon" type="image/png" href="../../lib/jasmine/lib/jasmine-2.0.3/jasmine_favicon.png">
+    <link rel="stylesheet" type="text/css" href="../../lib/jasmine/lib/jasmine-2.0.3/jasmine.css">
+    <script type="text/javascript" src="../../lib/jasmine/lib/jasmine-2.0.3/jasmine.js"></script>
+    <script type="text/javascript" src="../../lib/jasmine/lib/jasmine-2.0.3/jasmine-html.js"></script>
+    <script type="text/javascript" src="../../lib/jasmine/lib/jasmine-2.0.3/boot.js"></script>
+    <script src="../../lib/angular-mocks.js"></script>
+    <style type="text/css" media="screen">
+        div.spicy div {
+            padding: 10px;
+            border: solid 2px blue;
+        }
+    </style>
+</head>
+<body ng-app="myApp">
+<div class="spicy">
+    <div ng-controller="mainController">
+        {{name}}<br>
+        {{time}}
+        <div ng-controller="childController">
+            {{name}}<br>
+            {{time}}
+            <div ng-controller="grandChildController">
+                {{name}}<br>
+                {{time}}
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var myApp = angular.module('myApp', []);
+    myApp.controller('mainController', ['$scope', function ($scope) {
+        $scope.name = 'mainController';
+        $scope.time = '20141015'
+    }]);
+    myApp.controller('childController', ['$scope', function ($scope) {
+        $scope.name = 'childController';
+    }]);
+    myApp.controller('grandChildController', ['$scope', function ($scope) {
+        $scope.name = 'grandChildController';
+        $scope.time = '20141016'
+    }]);
+    //var a =angular.mock.module('myApp');
+
+    describe('myController function', function() {
+        describe('myController', function() {
+            var $scope;
+            beforeEach(module('myApp'));
+            beforeEach(inject(function($rootScope, $controller) {
+                $scope = $rootScope.$new();
+                $controller('mainController', {$scope: $scope});
+            }));
+
+            it('should set the default value of spice', function() {
+                expect($scope.name).toBe('mainController');
+                expect($scope.time).toBe('20141016');
+            });
+        });
+    });
+</script>
+</html>
